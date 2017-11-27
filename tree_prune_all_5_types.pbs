@@ -1,0 +1,14 @@
+#!/bin/bash
+#PBS -N Prune_and_stats 
+#PBS -V 					
+#PBS -l walltime=00:59:00				
+#PBS -l pmem=2200mb 
+#PBS -q old
+#PBS -l nodes=1:ppn=1:nehalem 
+#PBS -t 1-10000
+
+cd /scratch/ttuff/Tree_sampling/script/
+module load R
+export R_LIBS=$HOME/rlibs
+
+Rscript --vanilla ./tree_prune_all_5_types.R ${PBS_ARRAYID} 

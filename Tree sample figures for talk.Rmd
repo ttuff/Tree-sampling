@@ -1,0 +1,255 @@
+---
+title: "Phylogenetic tree trimming figures"
+output: html_notebook
+---
+```{r}
+library(phytools)
+library(diversitree)
+```
+
+
+
+```{r}
+
+pars <- c(0.3, 0, .05, .05, 0.05, 0.05)
+set.seed(2)
+phy <- tree.musse(pars, 7000, x0=1)
+plot(phy, show.tip.label = FALSE)
+full_tree <- phy
+```
+
+```{r}
+par(mfrow=c(1,3))
+n<-length(full_tree$tip.label)
+ee<-setNames(full_tree$edge.length[sapply(1:n,function(x,y)   which(y==x),y=full_tree$edge[,2])],full_tree$tip.label)
+hist(ee, breaks=500, ylim=c(0,300),xlim=c(0,6))
+dtips <- names(sample(ee, size=5800)) 
+hist(ee[which(names(ee) %in% dtips)], breaks=500, ylim=c(0,300),xlim=c(0,6))
+
+trimmer <- which(full_tree$tip.label %in% dtips)
+trimmed_tree <-  drop.tip(full_tree, trimmer)
+
+random_d_tips <- dtips
+ee_random_sample <- ee
+#
+random_trimmed_tree <- trimmed_tree
+
+n<-length(random_trimmed_tree$tip.label)
+ee<-setNames(random_trimmed_tree$edge.length[sapply(1:n,function(x,y)   which(y==x),y=random_trimmed_tree$edge[,2])],random_trimmed_tree$tip.label)
+hist(ee, breaks=500, ylim=c(0,300),xlim=c(0,6))
+
+plot(random_trimmed_tree, show.tip.label = FALSE)
+
+
+```
+
+```{r}
+#DSO
+par(mfrow=c(1,3))
+n<-length(full_tree$tip.label)
+ee<-setNames(full_tree$edge.length[sapply(1:n,function(x,y)   which(y==x),y=full_tree$edge[,2])],full_tree$tip.label)
+hist(ee, breaks=500, ylim=c(0,300),xlim=c(0,7))
+dtips <- names(sample(ee, size=5800, prob=as.numeric(ee))) 
+#dtips <- names(rev(ee)[1:6900])
+  #sample(ee, size=6900, prob=max(as.numeric(ee))-as.numeric(ee))) 
+hist(ee[which(names(ee) %in% dtips)], breaks=500, ylim=c(0,300),xlim=c(0,7))
+
+trimmer <- which(full_tree$tip.label %in% dtips)
+trimmed_tree <-  drop.tip(full_tree, trimmer)
+
+clumped_d_tips <- dtips
+ee_clumped_sample <- ee
+#
+clumped_trimmed_tree <- trimmed_tree
+
+n<-length(clumped_trimmed_tree$tip.label)
+ee<-setNames(clumped_trimmed_tree$edge.length[sapply(1:n,function(x,y)   which(y==x),y=clumped_trimmed_tree$edge[,2])],clumped_trimmed_tree$tip.label)
+hist(ee, breaks=500, ylim=c(0,300),xlim=c(0,7))
+
+plot(clumped_trimmed_tree, show.tip.label = FALSE)
+
+```
+
+
+```{r}
+#PDS
+par(mfrow=c(1,3))
+n<-length(full_tree$tip.label)
+ee<-setNames(full_tree$edge.length[sapply(1:n,function(x,y)   which(y==x),y=full_tree$edge[,2])],full_tree$tip.label)
+hist(ee, breaks=500, ylim=c(0,300),xlim=c(0,6))
+dtips <- names(sample(ee, size=5800, prob=1/as.numeric(ee))) 
+hist(ee[which(names(ee) %in% dtips)], breaks=500, ylim=c(0,300),xlim=c(0,6))
+
+trimmer <- which(full_tree$tip.label %in% dtips)
+trimmed_tree <-  drop.tip(full_tree, trimmer)
+dispersed_d_tips <- dtips
+ee_dispersed_sample <- ee
+#
+dispersed_trimmed_tree <- trimmed_tree
+
+n<-length(dispersed_trimmed_tree$tip.label)
+ee<-setNames(dispersed_trimmed_tree$edge.length[sapply(1:n,function(x,y)   which(y==x),y=dispersed_trimmed_tree$edge[,2])],dispersed_trimmed_tree$tip.label)
+hist(ee, breaks=500, ylim=c(0,300),xlim=c(0,6))
+
+plot(dispersed_trimmed_tree, show.tip.label = FALSE)
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+pdf(file="~/Desktop/trimmed_phylo.pdf", height=8.5, width=11)
+
+layout(matrix(seq(1,30, by=1), 5,6, byrow=FALSE), width=c(0.2, 1, 1, 1, 1, 0.1), heights = c(0.1, 1.5, 0.01, 0.5, 0.2))
+#layout.show(a)
+xmax <- 40
+par( mar=c(0,0,0,0))
+
+plot(0,0, type="n", xlab="", ylab="", xaxt="n", yaxt="n", bty="n")
+plot(0,0, type="n", xlab="", ylab="", xaxt="n", yaxt="n", bty="n")
+mtext("Tree topology", 4, line=-3)
+plot(0,0, type="n", xlab="", ylab="", xaxt="n", yaxt="n", bty="n")
+#mtext("Sample rules", 4, line=-4)
+plot(0,0, type="n", xlab="", ylab="", xaxt="n", yaxt="n", bty="n")
+mtext("Sampled tip lengths", 4, line=-3)
+plot(0,0, type="n", xlab="", ylab="", xaxt="n", yaxt="n", bty="n")
+plot(0,0, type="n", xlab="", ylab="", xaxt="n", yaxt="n", bty="n")
+
+mtext("Full simulated tree", 1, line=-2)
+plot(full_tree, show.tip.label = FALSE, direction="leftward")
+#plot(0, ylim=c(0,1.5), type="n", bty="n", xlab="", ylab="", xlim=c(0,10), main="", xaxt="n", yaxt="n")
+plot(0,0, type="n", xlab="", ylab="", xaxt="n", yaxt="n", bty="n")
+
+n<-length(full_tree$tip.label)
+ee<-setNames(full_tree$edge.length[sapply(1:n,function(x,y)   which(y==x),y=full_tree$edge[,2])],full_tree$tip.label)
+ee_full <- ee
+plot(density(ee_full), ylim=c(0,0.6), bty="n", xlim=c(0,xmax), main="", col="cornflowerblue", type="n")
+polygon(density(ee_full), bty="n", main="", col="grey")
+
+plot(0,0, type="n", xlab="", ylab="", xaxt="n", yaxt="n", bty="n")
+mtext("Tip branch lengths", 3, line=-4)
+plot(0,0, type="n", xlab="", ylab="", xaxt="n", yaxt="n", bty="n")
+
+mtext("Random sample", 1, line=-2)
+plot(random_trimmed_tree, show.tip.label = FALSE, direction="leftward")
+n<-length(random_trimmed_tree$tip.label)
+#plot(density(ee_random_sample[which(names(ee_random_sample) %in% random_d_tips)]), ylim=c(0,1.5), bty="n", xlim=c(0,10), main="", xaxt="n")
+plot(0,0, type="n", xlab="", ylab="", xaxt="n", yaxt="n", bty="n")
+
+ee<-setNames(random_trimmed_tree$edge.length[sapply(1:n,function(x,y)   which(y==x),y=random_trimmed_tree$edge[,2])],random_trimmed_tree$tip.label)
+plot(density(ee_full), ylim=c(0,0.6), bty="n", xlim=c(0,xmax), main="", yaxt="n", col=adjustcolor("grey", alpha=0.5), type="n")
+polygon(density(ee_full), bty="n",  main="", col=adjustcolor("grey", alpha=0.5))
+polygon(density(ee), bty="n",  main="", col=adjustcolor("limegreen", alpha=0.5))
+ee_random <- ee
+
+plot(0,0, type="n", xlab="", ylab="", xaxt="n", yaxt="n", bty="n")
+mtext("Tip branch lengths", 3, line=-4)
+plot(0,0, type="n", xlab="", ylab="", xaxt="n", yaxt="n", bty="n")
+
+mtext("Proportionally shallower splits", 1, line=-2)
+plot(clumped_trimmed_tree, show.tip.label = FALSE, direction="leftward")
+n<-length(clumped_trimmed_tree$tip.label)
+#plot(density(ee_clumped_sample[which(names(ee_clumped_sample) %in% clumped_d_tips)]), ylim=c(0,1.5), bty="n", xlim=c(0,10), main="", xaxt="n")
+plot(0,0, type="n", xlab="", ylab="", xaxt="n", yaxt="n", bty="n")
+
+ee<-setNames(clumped_trimmed_tree$edge.length[sapply(1:n,function(x,y)   which(y==x),y=clumped_trimmed_tree$edge[,2])],clumped_trimmed_tree$tip.label)
+plot(density(ee_full), ylim=c(0,0.6), bty="n", xlim=c(0,40), main="", yaxt="n", col=adjustcolor("limegreen", alpha=0.5), type="n")
+polygon(density(ee_full),  bty="n", main="", col=adjustcolor("grey", alpha=0.5))
+polygon(density(ee),  bty="n",  main="", col=adjustcolor("firebrick", alpha=0.5))
+ee_clumped <- ee
+
+plot(0,0, type="n", xlab="", ylab="", xaxt="n", yaxt="n", bty="n")
+mtext("Tip branch lengths", 3, line=-4)
+plot(0,0, type="n", xlab="", ylab="", xaxt="n", yaxt="n", bty="n")
+
+mtext("Proportionally deeper splits", 1, line=-2)
+plot(dispersed_trimmed_tree, show.tip.label = FALSE, direction="leftward")
+n<-length(dispersed_trimmed_tree$tip.label)
+#plot(density(ee_dispersed_sample[which(names(ee_dispersed_sample) %in% dispersed_d_tips)]), ylim=c(0,1.5), bty="n", xlim=c(0,10), main="", xaxt="n")
+plot(0,0, type="n", xlab="", ylab="", xaxt="n", yaxt="n", bty="n")
+
+ee<-setNames(dispersed_trimmed_tree$edge.length[sapply(1:n,function(x,y)   which(y==x),y=dispersed_trimmed_tree$edge[,2])],dispersed_trimmed_tree$tip.label)
+plot(density(ee_full), ylim=c(0,0.6), bty="n", xlim=c(0,40), main="", yaxt="n", col=adjustcolor("grey", alpha=0.5), type="n")
+polygon(density(ee_full), bty="n", main="", col=adjustcolor("grey", alpha=0.5))
+polygon(density(ee),  bty="n",  main="", col=adjustcolor("cornflowerblue", alpha=0.5))
+ee_dispersed <- ee
+
+plot(0,0, type="n", xlab="", ylab="", xaxt="n", yaxt="n", bty="n")
+mtext("Tip branch lengths", 3, line=-4)
+
+dev.off()
+```
+
+
+
+
+
+
+
+```{r}
+pdf(file="~/Desktop/D-place tree branch length age_d_place.pdf", width=11, height=8.5, bg="transparent")
+load("/Users/Ty/Box Sync/colliding ranges/Simulations_humans/Available trees/Full_tree.Rdata")
+
+layout(matrix(seq(1,2, by=1),1,2), widths=c(1,2))
+par(mar=c(5,4,4,2))
+plot(Full_tree, direction="leftward", show.tip.label = FALSE, main="D-place tree")
+
+plot(0,0, type="n", xaxt="n", yaxt="n", xlab="tip branch length", ylab="Density", bty="n", xlim=c(0,40), ylim=c(0,0.5))
+
+#polygon(density(ee_full), ylim=c(0,1.5), bty="n", xlim=c(0,10), main="", col=adjustcolor("grey", alpha=0.5))
+#polygon(density(ee_random), ylim=c(0,1.5), bty="n", xlim=c(0,10), main="", col=adjustcolor("limegreen", alpha=0.5))
+#polygon(density(ee_clumped), ylim=c(0,1.5), bty="n", xlim=c(0,10), main="", col=adjustcolor("firebrick", alpha=0.5))
+#polygon(density(ee_dispersed), ylim=c(0,1.5), bty="n", xlim=c(0,10), main="", col=adjustcolor("cornflowerblue", alpha=0.5))
+
+
+#Full_tree
+full_tree <- Full_tree
+n<-length(full_tree$tip.label)
+ee<-setNames(full_tree$edge.length[sapply(1:n,function(x,y)   which(y==x),y=full_tree$edge[,2])],full_tree$tip.label)
+polygon(density(ee), ylim=c(0,1.5), bty="n", xlim=c(0,10), main="", yaxt="n", col=adjustcolor("black", alpha=0.5), border="red")
+
+
+legend("topright", legend=c("Simulated 7000 tips tree", "1200 tip tree pruned randomely from the full tree", "1200 tip pruned tree proportionally biasing shallower splits ", "1200 tip pruned tree proportionally biasing deeper splits" , "1196 tip D-place tree"), fill=c(adjustcolor("grey", alpha=0.5),adjustcolor("limegreen", alpha=0.5),adjustcolor("firebrick", alpha=0.5),adjustcolor("cornflowerblue", alpha=0.5),adjustcolor("black", alpha=0.5)))
+
+
+axis(1)
+axis(2)
+dev.off()
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
